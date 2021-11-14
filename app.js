@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const session = require('express-session');
 
 var app = express();
 
@@ -15,14 +16,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret : 'PPIntegracion', 
+  resave: false,
+  saveUninitialized: true,
+  cookie : {maxAge : null}
+}))
 
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const clientesRouter = require('./routes/clientes');
-const empleadosRouter = require('./routes/clientes');
-const reclamosRouter = require('./routes/clientes');
-const sucursalRouter = require('./routes/clientes');
+const empleadosRouter = require('./routes/empleados');
+const reclamosRouter = require('./routes/reclamos');
+const sucursalRouter = require('./routes/sucursal');
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

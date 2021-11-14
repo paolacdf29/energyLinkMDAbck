@@ -14,7 +14,7 @@ const pool = mysql.createConnection({
      host : 'localhost',
      user: 'root',
      password: '',
-     database: 'reclamos01'
+     database: 'MDA2'
 });
 
 pool.query = util.promisify(pool.query);
