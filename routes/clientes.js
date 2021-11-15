@@ -37,17 +37,17 @@ router.get('/logout', async(req,res,next)=> {
     res.json({ok: true});
 });
 
-router.put('/registro', function(req, res){
+router.post('/registro', function(req, res){
 
     let usuario = {
-        id_cliente: req.body.id_cliente,
         id_sucursal: req.body.id_sucursal,
         cuit: req.body.cuit,
         razon_soc: req.body.razon_soc,
         contacto: req.body.contacto,
         telefono: req.body.telefono,
         email: req.body.email,
-        usuario: req.body.usuario
+        usuario: req.body.usuario,
+        contrasena: req.body.usuario 
     };
     registar(usuario)
     .then(cliente =>{
@@ -62,7 +62,7 @@ router.put('/recuperar', function(req, res){
     let usuario = req.body.usuario;
     recuperarClave(usuario)
         .then(cliente =>{
-            let respuesta = 'Se ha enviado un mail al correo ' + cliente[0].email + 'con su nueva clave';
+            let respuesta = 'Se ha enviado un mail al correo ' + cliente[0].email + ' con su nueva clave';
             res.json({ok: true, msj: respuesta});
         }).catch(err => {
             res.json({ok: false, error: err});
@@ -70,8 +70,9 @@ router.put('/recuperar', function(req, res){
 })
 
 async function registar(usuario){
-    let query = 'insert into Cliente values';
+    let query = 'insert into Cliente set ?';
     let row = await bd.query(query, [usuario]);
+    return row;
 }
 
 async function Logger(usario, clave){

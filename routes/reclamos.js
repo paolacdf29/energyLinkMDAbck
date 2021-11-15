@@ -16,7 +16,7 @@ router.post('/crear', function(req, res){
     let ticket = {
         id_cliente: req.session.user,
         id_empleado: null,
-        id_sucursal: getSucursalbycliente(idCliente),
+        id_sucursal: getSucursalbycliente(req.session.user),
         fecha_cierre:null,
         detalle: req.body.reclamo,
         fecha_creac: null,
@@ -51,7 +51,7 @@ async function getReclamosByUser(id_cliente){
 }
 
 async function crearReclamo(reclamo){
-    let query = 'insert into reclamo values ?';
+    let query = 'insert into reclamo set ?';
     let row = await bd.query(query, [reclamo]);
     return row;
 }
@@ -59,6 +59,7 @@ async function crearReclamo(reclamo){
 async function getSucursalbycliente(idCliente){
     let query = 'select id_sucursal from Cliente where id_cliente = ?';
     let row = await bd.query(query, [idCliente]);
+    console.log(row);
     return row[0].id_sucursal;
 }
 
