@@ -23,8 +23,8 @@ router.post('/login', async function(req, res){
 
     let user = await Logger(cliente, clave);
     if (user.length > 0){
-        const id = user[0].id_client;
-        req.session.user = id;
+        const uid = user[0].id_cliente;
+        req.session.user = uid;
         req.session.rol = 1; // 1 clientes, 2 empleados
         res.json(user);
     }else{

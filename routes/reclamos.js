@@ -12,24 +12,28 @@ router.get('/', function(req, res) {
         }); 
 });
 
-router.post('/crear', function(req, res){
+router.post('/crear', async function(req, res){
+    if (req.session.user) {
+    const uid =  req.session.user;
     let ticket = {
-        id_cliente: req.session.user,
-        id_empleado: null,
-        id_sucursal: getSucursalbycliente(req.session.user),
+        id_cliente: uid,
+        id_empleado: 1,
+        id_sucursal: await getSucursalbycliente(uid),
         fecha_cierre:null,
-        detalle: req.body.reclamo,
+        detalle: req.body.detalle,
         fecha_creac: null,
         estado: 0,
         prioridad: null
     }
-
-    crearReclamo(ticket)
-        .then(reclamo =>{
-            res.json(reclamo);
-        }).catch(err =>{
-            res.json({ok: false, error: err});
-        });
+        crearReclamo(ticket)
+            .then(reclamo =>{
+                res.json(reclamo);
+            }).catch(err =>{
+                res.json({ok: false, error: err});
+            });
+    }else{
+        res.json({ok: false, error: "el usuario debe estar logeado"});
+    }
 
 });
 
@@ -59,8 +63,10 @@ async function crearReclamo(reclamo){
 async function getSucursalbycliente(idCliente){
     let query = 'select id_sucursal from Cliente where id_cliente = ?';
     let row = await bd.query(query, [idCliente]);
+    let sucursal = row[0].id_sucursal;
+    console.log(sucursal);
     console.log(row);
-    return row[0].id_sucursal;
+    return sucursal;
 }
 
 async function getReclamos(){
