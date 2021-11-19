@@ -37,6 +37,26 @@ router.post('/crear', async function(req, res){
 
 });
 
+router.post('/crear2', async function(req, res){
+    const uid = req.body.uid; // req.params.uid
+    let ticket = {
+        id_cliente: uid,
+        id_empleado: 1,
+        id_sucursal: await getSucursalbycliente(uid),
+        fecha_cierre:null,
+        detalle: req.body.detalle,
+        estado: 0,
+        prioridad: null
+    }
+
+    crearReclamo(ticket)
+            .then(reclamo =>{
+                res.json(reclamo);
+            }).catch(err =>{
+                res.json({ok: false, error: err});
+            });
+});
+
 router.get('/cliente/:id', function(req, res) {
     let userid = req.params.id;
     getReclamosByUser(userid)
@@ -48,7 +68,7 @@ router.get('/cliente/:id', function(req, res) {
 });
 
 async function getReclamosByUser(id_cliente){
-    let query = 'select * from reclamo where id_cliente = ?';
+    let query = 'select * from reclamo where id_cliente = ? and estado = 0 order by id_reclamo desc';
     let row = await bd.query(query, [id_cliente]);
     return row;
 
@@ -63,14 +83,15 @@ async function crearReclamo(reclamo){
 async function getSucursalbycliente(idCliente){
     let query = 'select id_sucursal from Cliente where id_cliente = ?';
     let row = await bd.query(query, [idCliente]);
-    let sucursal = row[0].id_sucursal;
-    console.log(sucursal);
-    console.log(row);
+    let sucursal = 0;
+    if (row.length > 0){
+        sucursal = row[0].id_sucursal;
+    }
     return sucursal;
 }
 
 async function getReclamos(){
-    let query = 'select * from reclamo';
+    let query = 'select * from reclamo order by prioridad desc';
     let row = await bd.query(query);
     return row
 };

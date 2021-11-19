@@ -26,7 +26,7 @@ router.post('/login', async function(req, res){
         const uid = user[0].id_cliente;
         req.session.user = uid;
         req.session.rol = 1; // 1 clientes, 2 empleados
-        res.json(user);
+        res.json({ok: true, user});
     }else{
         res.json({ok: false, error: 'usuario y/o contraseña invalidos'});
     }; 
